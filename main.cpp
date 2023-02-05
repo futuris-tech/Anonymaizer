@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <ranges>
 using namespace std;
-typedef unsigned uint;
 
 bool is_good_anonimity(uint anonimity, uint size) {
 	uint min_anonimity;
@@ -75,9 +74,18 @@ int main() {
 	vector<person> database;
 	values regions, jobs;
 
-    uint min_anonymity = 10;
-    //cout << "minimum anonymity = ";
-    //cin >> min_anonymity;
+	cout <<
+		"Count k-anonymity - 0\n"
+		"Anonymize dataset - 1\n";
+	uint mode;
+	cin >> mode;
+	if (mode > 1) return 5;
+
+	uint min_anonymity = 1;
+	if (mode == 1) {
+		cout << "minimum anonymity = ";
+		cin >> min_anonymity;
+	}
 
 	string buffer;
 	for (person p; !input.eof(); database.push_back(p)) {
@@ -102,7 +110,7 @@ int main() {
 
 	ofstream output("output.csv", ios::binary);
 	ranges::sort(database);
-	uint equal_num = 1, k_anonymity = database.size();
+	uint equal_num = 1, k_anonymity = 0xffffffff;
 	database.reserve(database.size() + 1);
 	*database.end() = { 0,0,0 };
 	auto regions_data = regions.sorted();
@@ -124,8 +132,12 @@ int main() {
 		}
 	}
 
-	cout << "k_anonimity = " << k_anonymity << '\n';
-	delete[] regions_data;
+	if (k_anonymity == 0xffffffff)
+		cout << "Result database is empty!";
+	else
+		cout << "k_anonimity = " << k_anonymity << '\n';
 	delete[] jobs_data;
+
+	if (mode == 0) remove("output.csv");
 	return 0;
 }
